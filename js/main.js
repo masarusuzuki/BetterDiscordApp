@@ -54,6 +54,115 @@ var DataStore = (() => {
         constructor() {
             this.data = {settings: {stable: {}, canary: {}, ptb: {}}};
             this.pluginData = {};
+            this.config = {};
+            this.globals = {
+                bemotes: [],
+                settingsCookie: {},
+                bdplugins: {},
+                pluginCookie: {},
+                bdpluginErrors: [],
+                bdthemes: {},
+                themeCookie: {},
+                bdthemeErrors: [],
+                minSupportedVersion: "0.3.0",
+                bbdVersion: "0.2.25",
+                bbdChangelog: {
+                    description: "Mostly behind the scenes changes again.",
+                    changes: [
+                        {title: "What's New?", items: ["**Changes for plugin developers!** There are some new items in the `BdApi` that you may want to check out."]},
+                        {title: "Fixes", type: "fixed", items: ["**Modal Footers** are no longer blank hopefully!"]},
+                        {title: "Minor Stuff", type: "improved", items: ["**Injector Version** is now included in the version list to try and quell the confusion."]}
+                    ]
+                },
+                settings: {
+                    "Custom css live update":     {id: "bda-css-0", info: "",                                                  implemented: true,  hidden: true,  cat: "core"},
+                    "Custom css auto udpate":     {id: "bda-css-1", info: "",                                                  implemented: true,  hidden: true,  cat: "core"},
+                    "BetterDiscord Blue":         {id: "bda-gs-b",  info: "Replace Discord blue with BD Blue",                 implemented: false,  hidden: false, cat: "core"},
+                
+                    /* Core */
+                    /* ====== */
+                    "Public Servers":             {id: "bda-gs-1",  info: "Display public servers button",                     implemented: true,  hidden: false, cat: "core", category: "modules"},
+                    "Minimal Mode":               {id: "bda-gs-2",  info: "Hide elements and reduce the size of elements.",    implemented: true,  hidden: false, cat: "core", category: "modules"},
+                    "Voice Mode":                 {id: "bda-gs-4",  info: "Only show voice chat",                              implemented: true,  hidden: false, cat: "core", category: "modules"},
+                    "Hide Channels":              {id: "bda-gs-3",  info: "Hide channels in minimal mode",                     implemented: true,  hidden: false, cat: "core", category: "modules"},
+                    "Dark Mode":                  {id: "bda-gs-5",  info: "Make certain elements dark by default(wip)",        implemented: true,  hidden: false, cat: "core", category: "modules"},
+                    "Voice Disconnect":           {id: "bda-dc-0",  info: "Disconnect from voice server when closing Discord", implemented: true,  hidden: false, cat: "core", category: "modules"},
+                    "24 Hour Timestamps":         {id: "bda-gs-6",  info: "Replace 12hr timestamps with proper ones",          implemented: true,  hidden: false, cat: "core", category: "modules"},
+                    "Colored Text":               {id: "bda-gs-7",  info: "Make text color the same as role color",            implemented: true,  hidden: false, cat: "core", category: "modules"},
+                    "Normalize Classes":          {id: "fork-ps-4", info: "Adds stable classes to elements to help themes. (e.g. adds .da-channels to .channels-Ie2l6A)", implemented: true,  hidden: false, cat: "core", category: "modules"},
+                
+                    /* Content */
+                    "Content Error Modal":        {id: "fork-ps-1", info: "Shows a modal with plugin/theme errors",            implemented: true,  hidden: false, cat: "core", category: "content manager"},
+                    "Show Toasts":                {id: "fork-ps-2", info: "Shows a small notification for important information", implemented: true,  hidden: false, cat: "core", category: "content manager"},
+                    "Scroll To Settings":         {id: "fork-ps-3", info: "Auto-scrolls to a plugin's settings when the button is clicked (only if out of view)", implemented: true,  hidden: false, cat: "core", category: "content manager"},
+                    "Automatic Loading":          {id: "fork-ps-5", info: "Automatically loads, reloads, and unloads plugins and themes", implemented: true,  hidden: false, cat: "core", category: "content manager"},
+                
+                    /* Beta */
+                    "BBD Beta":                   {id: "fork-beta", info: "Gives access to BBD beta. (Requires full restart after changing.)", implemented: true,  hidden: false, cat: "core", category: "beta"},
+                
+                    /* Developer */
+                    "Developer Mode":         	  {id: "bda-gs-8",  info: "Developer Mode",                                    implemented: true,  hidden: false, cat: "core", category: "developer settings"},
+                    "Copy Selector":			  {id: "fork-dm-1", info: "Adds a \"Copy Selector\" option to context menus when developer mode is active", implemented: true,  hidden: false, cat: "core", category: "developer settings"},
+                
+                    /* Window Prefs */
+                    "Enable Transparency":        {id: "fork-wp-1", info: "Enables the main window to be see-through (requires restart)", implemented: true,  hidden: false, cat: "core", category: "window preferences"},
+                    "Window Frame":               {id: "fork-wp-2", info: "Adds the native os window frame to the main window", implemented: false,  hidden: true, cat: "core", category: "window preferences"},
+                
+                
+                    /* Emotes */
+                    /* ====== */
+                    "Download Emotes":            {id: "fork-es-3", info: "Download emotes when the cache is expired", implemented: true,  hidden: false, cat: "emote"},
+                    "Twitch Emotes":              {id: "bda-es-7",  info: "Show Twitch emotes",                                implemented: true,  hidden: false, cat: "emote"},
+                    "FrankerFaceZ Emotes":        {id: "bda-es-1",  info: "Show FrankerFaceZ Emotes",                          implemented: true,  hidden: false, cat: "emote"},
+                    "BetterTTV Emotes":           {id: "bda-es-2",  info: "Show BetterTTV Emotes",                             implemented: true,  hidden: false, cat: "emote"},
+                    "Emote Menu":                 {id: "bda-es-0",  info: "Show Twitch/Favourite emotes in emote menu",        implemented: true,  hidden: false, cat: "emote"},
+                    "Emoji Menu":                 {id: "bda-es-9",  info: "Show Discord emoji menu",                           implemented: true,  hidden: false, cat: "emote"},
+                    "Emote Auto Capitalization":  {id: "bda-es-4",  info: "Autocapitalize emote commands",                     implemented: true,  hidden: false, cat: "emote"},
+                    "Show Names":                 {id: "bda-es-6",  info: "Show emote names on hover",                         implemented: true,  hidden: false, cat: "emote"},
+                    "Show emote modifiers":       {id: "bda-es-8",  info: "Enable emote mods (flip, spin, pulse, spin2, spin3, 1spin, 2spin, 3spin, tr, bl, br, shake, shake2, shake3, flap)", implemented: true,  hidden: false, cat: "emote"},
+                    "Animate On Hover":           {id: "fork-es-2", info: "Only animate the emote modifiers on hover", implemented: true,  hidden: false, cat: "emote"}
+                },
+                defaultCookie: {
+                    "bda-gs-1": true,
+                    "bda-gs-2": false,
+                    "bda-gs-3": false,
+                    "bda-gs-4": false,
+                    "bda-gs-5": true,
+                    "bda-gs-6": false,
+                    "bda-gs-7": false,
+                    "bda-gs-8": false,
+                    "bda-es-0": true,
+                    "bda-es-1": true,
+                    "bda-es-2": true,
+                    "bda-es-4": false,
+                    "bda-es-6": true,
+                    "bda-es-7": true,
+                    "bda-gs-b": false,
+                    "bda-es-8": true,
+                    "bda-dc-0": false,
+                    "bda-css-0": false,
+                    "bda-css-1": false,
+                    "bda-es-9": true,
+                    "fork-dm-1": false,
+                    "fork-ps-1": true,
+                    "fork-ps-2": true,
+                    "fork-ps-3": true,
+                    "fork-ps-4": true,
+                    "fork-ps-5": true,
+                    "fork-es-2": false,
+                    "fork-es-3": true,
+                    "fork-wp-1": false,
+                    "fork-wp-2": false,
+                    "fork-beta": false
+                },
+                bdEmotes: {
+                    TwitchGlobal: {},
+                    TwitchSubscriber: {},
+                    BTTV: {},
+                    FrankerFaceZ: {},
+                    BTTV2: {}
+                }
+            };
         }
 
         initialize() {
@@ -73,8 +182,8 @@ var DataStore = (() => {
             }
         }
 
-        get BDFile() {return this._BDFile || (this._BDFile = path.resolve(bdConfig.dataPath, "bdstorage.json"));}
-        get settingsFile() {return this._settingsFile || (this._settingsFile = path.resolve(bdConfig.dataPath, "bdsettings.json"));}
+        get BDFile() {return this._BDFile || (this._BDFile = path.resolve(this.config.dataPath, "bdstorage.json"));}
+        get settingsFile() {return this._settingsFile || (this._settingsFile = path.resolve(this.config.dataPath, "bdsettings.json"));}
         getPluginFile(pluginName) {return path.resolve(ContentManager.pluginsFolder, pluginName + ".config.json");}
 
         getSettingGroup(key) {
@@ -157,118 +266,19 @@ window.bdPluginStorage = class bdPluginStorage {
     }
 };
 
-var settingsPanel, emoteModule, quickEmoteMenu, voiceMode, pluginModule, themeModule, dMode, publicServersModule;
-var minSupportedVersion = "0.3.0";
-var bbdVersion = "0.2.25";
-var bbdChangelog = {
-    description: "Mostly behind the scenes changes again.",
-    changes: [
-        {title: "What's New?", items: ["**Changes for plugin developers!** There are some new items in the `BdApi` that you may want to check out."]},
-        {title: "Fixes", type: "fixed", items: ["**Modal Footers** are no longer blank hopefully!"]},
-        {title: "Minor Stuff", type: "improved", items: ["**Injector Version** is now included in the version list to try and quell the confusion."]}
-    ]
-};
-
-
-var mainCore;
-
-var settings = {
-    "Custom css live update":     {id: "bda-css-0", info: "",                                                  implemented: true,  hidden: true,  cat: "core"},
-    "Custom css auto udpate":     {id: "bda-css-1", info: "",                                                  implemented: true,  hidden: true,  cat: "core"},
-    "BetterDiscord Blue":         {id: "bda-gs-b",  info: "Replace Discord blue with BD Blue",                 implemented: false,  hidden: false, cat: "core"},
-
-    /* Core */
-    /* ====== */
-    "Public Servers":             {id: "bda-gs-1",  info: "Display public servers button",                     implemented: true,  hidden: false, cat: "core", category: "modules"},
-    "Minimal Mode":               {id: "bda-gs-2",  info: "Hide elements and reduce the size of elements.",    implemented: true,  hidden: false, cat: "core", category: "modules"},
-    "Voice Mode":                 {id: "bda-gs-4",  info: "Only show voice chat",                              implemented: true,  hidden: false, cat: "core", category: "modules"},
-    "Hide Channels":              {id: "bda-gs-3",  info: "Hide channels in minimal mode",                     implemented: true,  hidden: false, cat: "core", category: "modules"},
-    "Dark Mode":                  {id: "bda-gs-5",  info: "Make certain elements dark by default(wip)",        implemented: true,  hidden: false, cat: "core", category: "modules"},
-    "Voice Disconnect":           {id: "bda-dc-0",  info: "Disconnect from voice server when closing Discord", implemented: true,  hidden: false, cat: "core", category: "modules"},
-    "24 Hour Timestamps":         {id: "bda-gs-6",  info: "Replace 12hr timestamps with proper ones",          implemented: true,  hidden: false, cat: "core", category: "modules"},
-    "Colored Text":               {id: "bda-gs-7",  info: "Make text color the same as role color",            implemented: true,  hidden: false, cat: "core", category: "modules"},
-    "Normalize Classes":          {id: "fork-ps-4", info: "Adds stable classes to elements to help themes. (e.g. adds .da-channels to .channels-Ie2l6A)", implemented: true,  hidden: false, cat: "core", category: "modules"},
-
-    /* Content */
-    "Content Error Modal":        {id: "fork-ps-1", info: "Shows a modal with plugin/theme errors",            implemented: true,  hidden: false, cat: "core", category: "content manager"},
-    "Show Toasts":                {id: "fork-ps-2", info: "Shows a small notification for important information", implemented: true,  hidden: false, cat: "core", category: "content manager"},
-    "Scroll To Settings":         {id: "fork-ps-3", info: "Auto-scrolls to a plugin's settings when the button is clicked (only if out of view)", implemented: true,  hidden: false, cat: "core", category: "content manager"},
-    "Automatic Loading":          {id: "fork-ps-5", info: "Automatically loads, reloads, and unloads plugins and themes", implemented: true,  hidden: false, cat: "core", category: "content manager"},
-
-    /* Beta */
-    "BBD Beta":                   {id: "fork-beta", info: "Gives access to BBD beta. (Requires full restart after changing.)", implemented: true,  hidden: false, cat: "core", category: "beta"},
-
-    /* Developer */
-    "Developer Mode":         	  {id: "bda-gs-8",  info: "Developer Mode",                                    implemented: true,  hidden: false, cat: "core", category: "developer settings"},
-    "Copy Selector":			  {id: "fork-dm-1", info: "Adds a \"Copy Selector\" option to context menus when developer mode is active", implemented: true,  hidden: false, cat: "core", category: "developer settings"},
-
-    /* Window Prefs */
-    "Enable Transparency":        {id: "fork-wp-1", info: "Enables the main window to be see-through (requires restart)", implemented: true,  hidden: false, cat: "core", category: "window preferences"},
-    "Window Frame":               {id: "fork-wp-2", info: "Adds the native os window frame to the main window", implemented: false,  hidden: true, cat: "core", category: "window preferences"},
-
-
-    /* Emotes */
-    /* ====== */
-    "Download Emotes":            {id: "fork-es-3", info: "Download emotes when the cache is expired", implemented: true,  hidden: false, cat: "emote"},
-    "Twitch Emotes":              {id: "bda-es-7",  info: "Show Twitch emotes",                                implemented: true,  hidden: false, cat: "emote"},
-    "FrankerFaceZ Emotes":        {id: "bda-es-1",  info: "Show FrankerFaceZ Emotes",                          implemented: true,  hidden: false, cat: "emote"},
-    "BetterTTV Emotes":           {id: "bda-es-2",  info: "Show BetterTTV Emotes",                             implemented: true,  hidden: false, cat: "emote"},
-    "Emote Menu":                 {id: "bda-es-0",  info: "Show Twitch/Favourite emotes in emote menu",        implemented: true,  hidden: false, cat: "emote"},
-    "Emoji Menu":                 {id: "bda-es-9",  info: "Show Discord emoji menu",                           implemented: true,  hidden: false, cat: "emote"},
-    "Emote Auto Capitalization":  {id: "bda-es-4",  info: "Autocapitalize emote commands",                     implemented: true,  hidden: false, cat: "emote"},
-    "Show Names":                 {id: "bda-es-6",  info: "Show emote names on hover",                         implemented: true,  hidden: false, cat: "emote"},
-    "Show emote modifiers":       {id: "bda-es-8",  info: "Enable emote mods (flip, spin, pulse, spin2, spin3, 1spin, 2spin, 3spin, tr, bl, br, shake, shake2, shake3, flap)", implemented: true,  hidden: false, cat: "emote"},
-    "Animate On Hover":           {id: "fork-es-2", info: "Only animate the emote modifiers on hover", implemented: true,  hidden: false, cat: "emote"}
-};
-
-var defaultCookie = {
-    "bda-gs-1": true,
-    "bda-gs-2": false,
-    "bda-gs-3": false,
-    "bda-gs-4": false,
-    "bda-gs-5": true,
-    "bda-gs-6": false,
-    "bda-gs-7": false,
-    "bda-gs-8": false,
-    "bda-es-0": true,
-    "bda-es-1": true,
-    "bda-es-2": true,
-    "bda-es-4": false,
-    "bda-es-6": true,
-    "bda-es-7": true,
-    "bda-gs-b": false,
-    "bda-es-8": true,
-    "bda-dc-0": false,
-    "bda-css-0": false,
-    "bda-css-1": false,
-    "bda-es-9": true,
-    "fork-dm-1": false,
-    "fork-ps-1": true,
-    "fork-ps-2": true,
-    "fork-ps-3": true,
-    "fork-ps-4": true,
-    "fork-ps-5": true,
-    "fork-es-2": false,
-    "fork-es-3": true,
-    "fork-wp-1": false,
-    "fork-wp-2": false,
-    "fork-beta": false
-};
-
-
-var settingsCookie = {};
-
-var bdpluginErrors = [], bdthemeErrors = []; // define for backwards compatibility
-
-var bdConfig = null;
+var settingsPanel, emoteModule, quickEmoteMenu, voiceMode, pluginModule, themeModule, dMode, publicServersModule, mainCore;
 
 function Core(config) {
-    window.bdConfig = config;
+    Object.assign(DataStore.config, config);
 }
 
 Core.prototype.init = async function() {
-    if (bdConfig.version < minSupportedVersion) {
-        this.alert("Not Supported", "BetterDiscord v" + bdConfig.version + " (your version)" + " is not supported by the latest js (" + bbdVersion + ").<br><br> Please download the latest version from <a href='https://github.com/rauenzi/BetterDiscordApp/releases/latest' target='_blank'>GitHub</a>");
+
+    try {this.deprecateGlobals();}
+    catch (e) {console.error(e);}
+
+    if (DataStore.config.version < DataStore.globals.minSupportedVersion) {
+        this.alert("Not Supported", "BetterDiscord v" + DataStore.config.version + " (your version)" + " is not supported by the latest js (" + DataStore.globals.bbdVersion + ").<br><br> Please download the latest version from <a href='https://github.com/rauenzi/BetterDiscordApp/releases/latest' target='_blank'>GitHub</a>");
         return;
     }
 
@@ -282,8 +292,8 @@ Core.prototype.init = async function() {
         return;
     }
 
-    const latestLocalVersion = bdConfig.updater ? bdConfig.updater.LatestVersion : bdConfig.latestVersion;
-    if (latestLocalVersion > bdConfig.version) {
+    const latestLocalVersion = DataStore.config.updater ? DataStore.config.updater.LatestVersion : DataStore.config.latestVersion;
+    if (latestLocalVersion > DataStore.config.version) {
         this.alert("Update Available", `
             An update for BandagedBD is available (${latestLocalVersion})! Please Reinstall!<br /><br />
             <a href='https://github.com/rauenzi/BetterDiscordApp/releases/latest' target='_blank'>Download Installer</a>
@@ -313,18 +323,24 @@ Core.prototype.init = async function() {
     settingsPanel = new V2_SettingsPanel();
     settingsPanel.initializeSettings();
 
-    Utils.log("Startup", "Loading Plugins");
+
     pluginModule = new PluginModule();
+    themeModule = new ThemeModule();
+
+    try {this.deprecateClasses();}
+    catch (e) {console.error(e);}
+    
+
+    Utils.log("Startup", "Loading Plugins");
     pluginModule.loadPlugins();
 
     Utils.log("Startup", "Loading Themes");
-    themeModule = new ThemeModule();
     themeModule.loadThemes();
 
     $("#customcss").detach().appendTo(document.head);
 
     window.addEventListener("beforeunload", function() {
-        if (settingsCookie["bda-dc-0"]) document.querySelector(".btn.btn-disconnect").click();
+        if (DataStore.globals.settingsCookie["bda-dc-0"]) document.querySelector(".btn.btn-disconnect").click();
     });
 
     emoteModule.autoCapitalize();
@@ -335,16 +351,77 @@ Core.prototype.init = async function() {
     this.initObserver();
 
     // Show loading errors
-    if (settingsCookie["fork-ps-1"]) {
+    if (DataStore.globals.settingsCookie["fork-ps-1"]) {
         Utils.log("Startup", "Collecting Startup Errors");
-        this.showContentErrors({plugins: bdpluginErrors, themes: bdthemeErrors});
+        this.showContentErrors({plugins: DataStore.globals.bdpluginErrors, themes: DataStore.globals.bdthemeErrors});
     }
 
     const previousVersion = DataStore.getBDData("version");
-    if (bbdVersion > previousVersion) {
-        if (bbdChangelog) this.showChangelogModal(bbdChangelog);
-        DataStore.setBDData("version", bbdVersion);
+    if (DataStore.globals.bbdVersion > previousVersion) {
+        if (DataStore.globals.bbdChangelog) this.showChangelogModal(DataStore.globals.bbdChangelog);
+        DataStore.setBDData("version", DataStore.globals.bbdVersion);
     }
+};
+
+Core.prototype.deprecateGlobals = function() {
+    const pluginFileRegex = /\.plugin\.js/;
+    const deprecateGlobal = (key, value) => {
+        Object.defineProperty(window, key, {
+            get() {
+                const stack = (new Error()).stack;
+                const trace = stack.split("\n");
+                if (trace.length < 3) return value;
+                if (pluginFileRegex.test(trace[1]) || pluginFileRegex.test(trace[2])) console.warn(`%c[BandagedBD]%c [Deprecation Notice]%c "${key}" may be removed in future versions. Please only use BdApi.`, "color: #E8A400; font-weight: 700;", "color: #E8A400;", "");
+                return value;
+            }
+        });  
+    };
+    
+    deprecateGlobal("minSupportedVersion", DataStore.globals.minSupportedVersion);
+    deprecateGlobal("bbdVersion", DataStore.globals.bbdVersion);
+    deprecateGlobal("bbdChangelog", DataStore.globals.bbdChangelog);
+    deprecateGlobal("settings", DataStore.globals.settings);
+    deprecateGlobal("defaultCookie", DataStore.globals.defaultCookie);
+    deprecateGlobal("settingsCookie", DataStore.globals.settingsCookie);
+    deprecateGlobal("bdpluginErrors", DataStore.globals.bdpluginErrors);
+    deprecateGlobal("bdthemeErrors", DataStore.globals.bdthemeErrors);
+    deprecateGlobal("bdConfig", DataStore.config);
+    deprecateGlobal("bemotes", DataStore.globals.bemotes);
+    deprecateGlobal("bdEmotes", DataStore.globals.bdEmotes);
+    deprecateGlobal("bdthemes", DataStore.globals.bdthemes);
+    deprecateGlobal("bdplugins", DataStore.globals.bdplugins);
+    deprecateGlobal("pluginCookie", DataStore.globals.pluginCookie);
+    deprecateGlobal("themeCookie", DataStore.globals.themeCookie);
+};
+
+Core.prototype.deprecateClasses = function() {
+    const pluginFileRegex = /\.plugin\.js/;
+    const deprecateClass = function(key, classToDeprecate) {
+        let methods = Object.getOwnPropertyNames(classToDeprecate);
+        if (Object.getPrototypeOf(classToDeprecate) !== Object.getPrototypeOf(Object)) methods = methods.concat(Object.getOwnPropertyNames(Object.getPrototypeOf(classToDeprecate)));
+        for (let i = 0; i < methods.length; i++) {
+            if (methods[i] === "constructor" || typeof(classToDeprecate[methods[i]]) !== "function") continue;
+            const original = classToDeprecate[methods[i]];
+            classToDeprecate[methods[i]] = function() {
+                const stack = (new Error()).stack;
+                const trace = stack.split("\n");
+                if (trace.length < 3) return Reflect.apply(original, this, arguments);
+                if (pluginFileRegex.test(trace[1]) || pluginFileRegex.test(trace[2])) console.warn(`%c[BandagedBD]%c [Deprecation Notice]%c "${key}" may be removed in future versions. Please only use BdApi.`, "color: #E8A400; font-weight: 700;", "color: #E8A400;", "");
+                return Reflect.apply(original, this, arguments);
+            };
+        }
+    };
+    
+    deprecateClass("BDV2", BDV2);
+    deprecateClass("pluginModule", pluginModule);
+    deprecateClass("themeModule", themeModule);
+    deprecateClass("Utils", Utils);
+    deprecateClass("BDEvents", BDEvents);
+    deprecateClass("settingsPanel", settingsPanel);
+    deprecateClass("DataStore", DataStore);
+    deprecateClass("emoteModule", emoteModule);
+    deprecateClass("ContentManager", ContentManager);
+    deprecateClass("ClassNormalizer", ClassNormalizer);
 };
 
 Core.prototype.checkForGuilds = function() {
@@ -355,8 +432,8 @@ Core.prototype.checkForGuilds = function() {
             if (document.querySelectorAll(`.${wrapper}`).length > 0) timesChecked++;
             const guild = BDV2.guildClasses.listItem.split(" ")[0];
             const blob = BDV2.guildClasses.blobContainer.split(" ")[0];
-            if (document.querySelectorAll(`.${wrapper} .${guild} .${blob}`).length > 0) return resolve(bdConfig.deferLoaded = true);
-            else if (timesChecked >= 50) return resolve(bdConfig.deferLoaded = true);
+            if (document.querySelectorAll(`.${wrapper} .${guild} .${blob}`).length > 0) return resolve(DataStore.config.deferLoaded = true);
+            else if (timesChecked >= 50) return resolve(DataStore.config.deferLoaded = true);
             setTimeout(checkForGuilds, 100);
         };
         $(document).ready(function () {
@@ -373,15 +450,15 @@ Core.prototype.injectExternals = async function() {
 Core.prototype.initSettings = function () {
     DataStore.initialize();
     if (!DataStore.getSettingGroup("settings")) {
-        settingsCookie = defaultCookie;
+        Object.assign(DataStore.globals.settingsCookie, DataStore.globals.defaultCookie);
         this.saveSettings();
     }
     else {
         this.loadSettings();
         $("<style id=\"customcss\">").text(atob(DataStore.getBDData("bdcustomcss"))).appendTo(document.head);
-        for (var setting in defaultCookie) {
-            if (settingsCookie[setting] == undefined) {
-                settingsCookie[setting] = defaultCookie[setting];
+        for (var setting in DataStore.globals.defaultCookie) {
+            if (DataStore.globals.settingsCookie[setting] == undefined) {
+                DataStore.globals.settingsCookie[setting] = DataStore.globals.defaultCookie[setting];
                 this.saveSettings();
             }
         }
@@ -389,11 +466,11 @@ Core.prototype.initSettings = function () {
 };
 
 Core.prototype.saveSettings = function () {
-    DataStore.setSettingGroup("settings", settingsCookie);
+    DataStore.setSettingGroup("settings", DataStore.globals.settingsCookie);
 };
 
 Core.prototype.loadSettings = function () {
-    settingsCookie = DataStore.getSettingGroup("settings");
+    Object.assign(DataStore.globals.settingsCookie, DataStore.getSettingGroup("settings"));
 };
 
 Core.prototype.initObserver = function () {
@@ -438,7 +515,7 @@ Core.prototype.inject24Hour = function() {
 
     const twelveHour = new RegExp(`([0-9]{1,2}):([0-9]{1,2})\\s(AM|PM)`);
     const convert = (data) => {
-        if (!settingsCookie["bda-gs-6"]) return;
+        if (!DataStore.globals.settingsCookie["bda-gs-6"]) return;
         const matched = data.returnValue.match(twelveHour);
         if (!matched || matched.length !== 4) return;
         if (matched[3] === "AM") return data.returnValue = data.returnValue.replace(matched[0], `${matched[1] === "12" ? "00" : matched[1].padStart(2, "0")}:${matched[2]}`);
@@ -464,7 +541,7 @@ Core.prototype.injectColoredText = function() {
         if (originalType.__originalMethod) return; // Don't patch again
         messageContent.type.type = function(props) {
             const returnValue = originalType(props);
-            const roleColor = settingsCookie["bda-gs-7"] ? props.message.colorString || "" : "";
+            const roleColor = DataStore.globals.settingsCookie["bda-gs-7"] ? props.message.colorString || "" : "";
             returnValue.props.style = {color: roleColor};
             return returnValue;
         };
@@ -596,7 +673,7 @@ Core.prototype.showContentErrors = function({plugins: pluginErrors = [], themes:
  * @param {number} options.timeout Adjusts the time (in ms) the toast should be shown for before disappearing automatically. Default: 3000
  */
 Core.prototype.showToast = function(content, options = {}) {
-    if (!bdConfig.deferLoaded) return;
+    if (!DataStore.config.deferLoaded) return;
     if (!document.querySelector(".bd-toasts")) {
         let toastWrapper = document.createElement("div");
         toastWrapper.classList.add("bd-toasts");
@@ -632,7 +709,7 @@ Core.prototype.showChangelogModal = function(options = {}) {
     const MarkdownParser = BdApi.findModuleByProps("defaultRules", "parse");
     if (!Changelog || !ModalStack || !ChangelogClasses || !TextElement || !FlexChild || !Titles || !MarkdownParser) return;
 
-    const {image = "https://repository-images.githubusercontent.com/105473537/957b5480-7c26-11e9-8401-50fa820cbae5", description = "", changes = [], title = "BandagedBD", subtitle = `v${bbdVersion}`, footer} = options;
+    const {image = "https://repository-images.githubusercontent.com/105473537/957b5480-7c26-11e9-8401-50fa820cbae5", description = "", changes = [], title = "BandagedBD", subtitle = `v${DataStore.globals.bbdVersion}`, footer} = options;
     const ce = BdApi.React.createElement;
     const changelogItems = [ce("img", {src: image})];
     if (description) changelogItems.push(ce("p", null, MarkdownParser.parse(description)));
@@ -694,34 +771,19 @@ Core.prototype.showChangelogModal = function(options = {}) {
  * --Twitchemotes.com api
  */
 
-window.emotesFfz = {};
-window.emotesBTTV = {};
-window.emotesBTTV2 = {};
-window.emotesTwitch = {};
-window.subEmotesTwitch = {};
-
-window.bdEmotes = {
-    TwitchGlobal: {},
-    TwitchSubscriber: {},
-    BTTV: {},
-    FrankerFaceZ: {},
-    BTTV2: {}
-};
-
-window.bdEmoteSettingIDs = {
-    TwitchGlobal: "bda-es-7",
-    TwitchSubscriber: "bda-es-7",
-    BTTV: "bda-es-2",
-    FrankerFaceZ: "bda-es-1",
-    BTTV2: "bda-es-2"
-};
-
 function EmoteModule() {
+    this.bdEmoteSettingIDs = {
+        TwitchGlobal: "bda-es-7",
+        TwitchSubscriber: "bda-es-7",
+        BTTV: "bda-es-2",
+        FrankerFaceZ: "bda-es-1",
+        BTTV2: "bda-es-2"
+    };
     Object.defineProperty(this, "categories", {
         get: function() {
             const cats = [];
-            for (const current in window.bdEmoteSettingIDs) {
-                if (settingsCookie[window.bdEmoteSettingIDs[current]]) cats.push(current);
+            for (const current in this.bdEmoteSettingIDs) {
+                if (DataStore.globals.settingsCookie[this.bdEmoteSettingIDs[current]]) cats.push(current);
             }
             return cats;
         }
@@ -786,31 +848,31 @@ EmoteModule.prototype.init = async function () {
                     let emoteModifier = emoteSplit[1] ? emoteSplit[1] : "";
                     let emoteOverride = emoteModifier.slice(0);
 
-                    if (emoteName.length < 4 || bemotes.includes(emoteName)) continue;
-                    if (!this.modifiers.includes(emoteModifier) || !settingsCookie["bda-es-8"]) emoteModifier = "";
+                    if (emoteName.length < 4 || DataStore.globals.bemotes.includes(emoteName)) continue;
+                    if (!this.modifiers.includes(emoteModifier) || !DataStore.globals.settingsCookie["bda-es-8"]) emoteModifier = "";
                     if (!this.overrides.includes(emoteOverride)) emoteOverride = "";
                     else emoteModifier = emoteOverride;
 
                     let current = this.categories[c];
                     if (emoteOverride === "twitch") {
-                        if (window.bdEmotes.TwitchGlobal[emoteName]) current = "TwitchGlobal";
-                        else if (window.bdEmotes.TwitchSubscriber[emoteName]) current = "TwitchSubscriber";
+                        if (DataStore.globals.bdEmotes.TwitchGlobal[emoteName]) current = "TwitchGlobal";
+                        else if (DataStore.globals.bdEmotes.TwitchSubscriber[emoteName]) current = "TwitchSubscriber";
                     }
                     else if (emoteOverride === "bttv") {
-                        if (window.bdEmotes.BTTV[emoteName]) current = "BTTV";
-                        else if (window.bdEmotes.BTTV2[emoteName]) current = "BTTV2";
+                        if (DataStore.globals.bdEmotes.BTTV[emoteName]) current = "BTTV";
+                        else if (DataStore.globals.bdEmotes.BTTV2[emoteName]) current = "BTTV2";
                     }
                     else if (emoteOverride === "ffz") {
-                        if (window.bdEmotes.FrankerFaceZ[emoteName]) current = "FrankerFaceZ";
+                        if (DataStore.globals.bdEmotes.FrankerFaceZ[emoteName]) current = "FrankerFaceZ";
                     }
 
-                    if (!window.bdEmotes[current][emoteName] || !settingsCookie[window.bdEmoteSettingIDs[current]]) continue;
+                    if (!DataStore.globals.bdEmotes[current][emoteName] || !DataStore.globals.settingsCookie[this.bdEmoteSettingIDs[current]]) continue;
                     const results = nodes[n].match(new RegExp(`([\\s]|^)${Utils.escape(emoteModifier ? emoteName + ":" + emoteModifier : emoteName)}([\\s]|$)`));
                     if (!results) continue;
                     const pre = nodes[n].substring(0, results.index + results[1].length);
                     const post = nodes[n].substring(results.index + results[0].length - results[2].length);
                     nodes[n] = pre;
-                    const emoteComponent = BDV2.react.createElement(BDEmote, {name: emoteName, url: window.bdEmotes[current][emoteName], modifier: emoteModifier});
+                    const emoteComponent = BDV2.react.createElement(BDEmote, {name: emoteName, url: DataStore.globals.bdEmotes[current][emoteName], modifier: emoteModifier});
                     nodes.splice(n + 1, 0, post);
                     nodes.splice(n + 1, 0, emoteComponent);
                 }
@@ -842,18 +904,18 @@ EmoteModule.prototype.disable = function() {
 EmoteModule.prototype.clearEmoteData = async function() {
     let _fs = require("fs");
     let emoteFile = "emote_data.json";
-    let file = bdConfig.dataPath + emoteFile;
+    let file = DataStore.config.dataPath + emoteFile;
     let exists = _fs.existsSync(file);
     if (exists) _fs.unlinkSync(file);
     DataStore.setBDData("emoteCacheDate", (new Date()).toJSON());
 
-    window.bdEmotes = {
+    Object.assign(DataStore.globals.bdEmotes, {
         TwitchGlobal: {},
         TwitchSubscriber: {},
         BTTV: {},
         FrankerFaceZ: {},
         BTTV2: {}
-    };
+    });
 };
 
 EmoteModule.prototype.isCacheValid = function() {
@@ -871,11 +933,11 @@ EmoteModule.prototype.isCacheValid = function() {
 EmoteModule.prototype.loadEmoteData = async function(emoteInfo) {
     const fs = require("fs");
     const emoteFile = "emote_data.json";
-    const file = bdConfig.dataPath + emoteFile;
+    const file = DataStore.config.dataPath + emoteFile;
     const exists = await new Promise(r => fs.exists(file, r));
 
     if (exists && this.isCacheValid()) {
-        if (settingsCookie["fork-ps-2"]) mainCore.showToast("Loading emotes from cache.", {type: "info"});
+        if (DataStore.globals.settingsCookie["fork-ps-2"]) mainCore.showToast("Loading emotes from cache.", {type: "info"});
         Utils.log("Emotes", "Loading emotes from local cache.");
 
         const data = await new Promise(resolve => {
@@ -888,14 +950,14 @@ EmoteModule.prototype.loadEmoteData = async function(emoteInfo) {
 
         const parsed = Utils.testJSON(data);
         let isValid = !!parsed;
-        if (isValid) window.bdEmotes = parsed;
+        if (isValid) Object.assign(DataStore.globals.bdEmotes, parsed);
 
         for (const e in emoteInfo) {
-            isValid = Object.keys(window.bdEmotes[emoteInfo[e].variable]).length > 0;
+            isValid = Object.keys(DataStore.globals.bdEmotes[emoteInfo[e].variable]).length > 0;
         }
 
         if (isValid) {
-            if (settingsCookie["fork-ps-2"]) mainCore.showToast("Emotes successfully loaded.", {type: "success"});
+            if (DataStore.globals.settingsCookie["fork-ps-2"]) mainCore.showToast("Emotes successfully loaded.", {type: "success"});
             return;
         }
 
@@ -903,18 +965,18 @@ EmoteModule.prototype.loadEmoteData = async function(emoteInfo) {
         await new Promise(r => fs.unlink(file, r));
     }
 
-    if (!settingsCookie["fork-es-3"]) return;
-    if (settingsCookie["fork-ps-2"]) mainCore.showToast("Downloading emotes in the background do not reload.", {type: "info"});
+    if (!DataStore.globals.settingsCookie["fork-es-3"]) return;
+    if (DataStore.globals.settingsCookie["fork-ps-2"]) mainCore.showToast("Downloading emotes in the background do not reload.", {type: "info"});
 
     for (let e in emoteInfo) {
         await new Promise(r => setTimeout(r, 1000));
         let data = await this.downloadEmotes(emoteInfo[e]);
-        window.bdEmotes[emoteInfo[e].variable] = data;
+        DataStore.globals.bdEmotes[emoteInfo[e].variable] = data;
     }
 
-    if (settingsCookie["fork-ps-2"]) mainCore.showToast("All emotes successfully downloaded.", {type: "success"});
+    if (DataStore.globals.settingsCookie["fork-ps-2"]) mainCore.showToast("All emotes successfully downloaded.", {type: "success"});
 
-    try { await new Promise(r => fs.writeFile(file, JSON.stringify(window.bdEmotes), "utf8", r)); }
+    try { await new Promise(r => fs.writeFile(file, JSON.stringify(DataStore.globals.bdEmotes), "utf8", r)); }
     catch (err) { Utils.err("Emotes", "Could not save emote data.", err); }
 };
 
@@ -944,7 +1006,7 @@ EmoteModule.prototype.downloadEmotes = function(emoteMeta) {
             if (typeof(emoteMeta.parser) === "function") parsedData = emoteMeta.parser(parsedData);
 
             for (let emote in parsedData) {
-                if (emote.length < 4 || bemotes.includes(emote)) {
+                if (emote.length < 4 || DataStore.globals.bemotes.includes(emote)) {
                     delete parsedData[emote];
                     continue;
                 }
@@ -959,15 +1021,14 @@ EmoteModule.prototype.downloadEmotes = function(emoteMeta) {
 EmoteModule.prototype.getBlacklist = function () {
     return new Promise(resolve => {
         $.getJSON(`https://rauenzi.github.io/BetterDiscordApp/data/emotefilter.json`, function (data) {
-            resolve(bemotes = data.blacklist);
+            if (data.blacklist && data.blacklist.length) DataStore.globals.bemotes.splice(DataStore.globals.bemotes.length, 0, ...data.blacklist);
+            resolve();
         });
     });
 };
 
-var bemotes = [];
-
 EmoteModule.prototype.autoCapitalize = function () {
-    if (!settingsCookie["bda-es-4"] || this.autoCapitalizeActive) return;
+    if (!DataStore.globals.settingsCookie["bda-es-4"] || this.autoCapitalizeActive) return;
     $("body").on("keyup.bdac change.bdac paste.bdac", $(".channelTextArea-rNsIhG textarea:first"), () => {
         var text = $(".channelTextArea-rNsIhG textarea:first").val();
         if (text == undefined) return;
@@ -985,7 +1046,7 @@ EmoteModule.prototype.autoCapitalize = function () {
 };
 
 EmoteModule.prototype.capitalize = function (value) {
-    var res = window.bdEmotes.TwitchGlobal;
+    var res = DataStore.globals.bdEmotes.TwitchGlobal;
     for (var p in res) {
         if (res.hasOwnProperty(p) && value == (p + "").toLowerCase()) {
             return p;
@@ -1035,9 +1096,9 @@ QuickEmoteMenu.prototype.init = function() {
     teContainer += "        <div class=\"scroller scroller-2FKFPG\">";
     teContainer += "            <div class=\"emote-menu-inner\">";
     var url = "";
-    for (let emote in window.bdEmotes.TwitchGlobal) {
-        if (window.bdEmotes.TwitchGlobal.hasOwnProperty(emote)) {
-            url = window.bdEmotes.TwitchGlobal[emote];
+    for (let emote in DataStore.globals.bdEmotes.TwitchGlobal) {
+        if (DataStore.globals.bdEmotes.TwitchGlobal.hasOwnProperty(emote)) {
+            url = DataStore.globals.bdEmotes.TwitchGlobal[emote];
             teContainer += "<div class=\"emote-container\">";
             teContainer += "    <img class=\"emote-icon\" alt=\"\" src=\"" + url + "\" title=\"" + emote + "\">";
             teContainer += "    </img>";
@@ -1142,14 +1203,14 @@ QuickEmoteMenu.prototype.switchQem = function(id) {
 QuickEmoteMenu.prototype.obsCallback = function (elem) {
     if (!this.initialized) return;
     var e = $(elem);
-    if (!settingsCookie["bda-es-9"]) {
+    if (!DataStore.globals.settingsCookie["bda-es-9"]) {
         e.addClass("bda-qme-hidden");
     }
     else {
         e.removeClass("bda-qme-hidden");
     }
 
-    if (!settingsCookie["bda-es-0"]) return;
+    if (!DataStore.globals.settingsCookie["bda-es-0"]) return;
 
     e.prepend(this.qmeHeader);
     e.append(this.teContainer);
@@ -1413,11 +1474,6 @@ VoiceMode.prototype.disable = function () {
 
 
 
-// e.remote.app.getAppPath()
-// path = require("path")
-// require("path").resolve(require("electron").remote.app.getAppPath(), "node_modules", "request", "index.js");
-window.bdthemes = {};
-window.bdplugins = {};
 var ContentManager = (() => {
     const path = require("path");
     const fs = require("fs");
@@ -1444,8 +1500,8 @@ var ContentManager = (() => {
             Module._extensions[".css"] = this.getContentRequire("theme");
         }
 
-        get pluginsFolder() {return this._pluginsFolder || (this._pluginsFolder = fs.realpathSync(path.resolve(bdConfig.dataPath + "plugins/")));}
-        get themesFolder() {return this._themesFolder || (this._themesFolder = fs.realpathSync(path.resolve(bdConfig.dataPath + "themes/")));}
+        get pluginsFolder() {return this._pluginsFolder || (this._pluginsFolder = fs.realpathSync(path.resolve(DataStore.config.dataPath + "plugins/")));}
+        get themesFolder() {return this._themesFolder || (this._themesFolder = fs.realpathSync(path.resolve(DataStore.config.dataPath + "themes/")));}
 
         watchContent(contentType) {
             if (this.watchers[contentType]) return;
@@ -1591,14 +1647,14 @@ var ContentManager = (() => {
                 if (!content.type) return;
                 try {
                     content.plugin = new content.type();
-                    delete bdplugins[content.plugin.getName()];
-                    bdplugins[content.plugin.getName()] = content;
+                    delete DataStore.globals.bdplugins[content.plugin.getName()];
+                    DataStore.globals.bdplugins[content.plugin.getName()] = content;
                 }
                 catch (error) {return {name: filename, file: filename, message: "Could not be constructed.", error: {message: error.message, stack: error.stack}};}
             }
             else {
-                delete bdthemes[content.name];
-                bdthemes[content.name] = content;
+                delete DataStore.globals.bdthemes[content.name];
+                DataStore.globals.bdthemes[content.name] = content;
             }
         }
 
@@ -1631,7 +1687,7 @@ var ContentManager = (() => {
             const fileEnding = isPlugin ? ".plugin.js" : ".theme.css";
             const basedir = isPlugin ? this.pluginsFolder : this.themesFolder;
             const files = fs.readdirSync(basedir);
-            const contentList = Object.values(isPlugin ? bdplugins : bdthemes);
+            const contentList = Object.values(isPlugin ? DataStore.globals.bdplugins : DataStore.globals.bdthemes);
             const removed = contentList.filter(t => !files.includes(t.filename)).map(c => isPlugin ? c.plugin.getName() : c.name);
             const added = files.filter(f => !contentList.find(t => t.filename == f) && f.endsWith(fileEnding) && fs.statSync(path.resolve(basedir, f)).isFile());
             return {added, removed};
@@ -1664,42 +1720,41 @@ var ContentManager = (() => {
  * https://github.com/Jiiks/BetterDiscordApp
  */
 
-var pluginCookie = {};
-
 function PluginModule() {
 
 }
 
 PluginModule.prototype.loadPlugins = function () {
     this.loadPluginData();
-    bdpluginErrors = ContentManager.loadPlugins();
-    var plugins = Object.keys(bdplugins);
+    const errors = ContentManager.loadPlugins();
+    if (errors && errors.length) DataStore.globals.bdpluginErrors.splice(DataStore.globals.bdpluginErrors, 0, errors);
+    var plugins = Object.keys(DataStore.globals.bdplugins);
     for (var i = 0; i < plugins.length; i++) {
         var plugin, name;
 
         try {
-            plugin = bdplugins[plugins[i]].plugin;
+            plugin = DataStore.globals.bdplugins[plugins[i]].plugin;
             name = plugin.getName();
             if (plugin.load && typeof(plugin.load) == "function") plugin.load();
         }
         catch (err) {
-            pluginCookie[name] = false;
+            DataStore.globals.pluginCookie[name] = false;
             Utils.err("Plugins", name + " could not be loaded.", err);
-            bdpluginErrors.push({name: name, file: bdplugins[plugins[i]].filename, message: "load() could not be fired.", error: {message: err.message, stack: err.stack}});
+            DataStore.globals.bdpluginErrors.push({name: name, file: DataStore.globals.bdplugins[plugins[i]].filename, message: "load() could not be fired.", error: {message: err.message, stack: err.stack}});
             continue;
         }
 
-        if (!pluginCookie[name]) pluginCookie[name] = false;
+        if (!DataStore.globals.pluginCookie[name]) DataStore.globals.pluginCookie[name] = false;
 
-        if (pluginCookie[name]) {
+        if (DataStore.globals.pluginCookie[name]) {
             try {
                 plugin.start();
-                if (settingsCookie["fork-ps-2"]) mainCore.showToast(`${plugin.getName()} v${plugin.getVersion()} has started.`);
+                if (DataStore.globals.settingsCookie["fork-ps-2"]) mainCore.showToast(`${plugin.getName()} v${plugin.getVersion()} has started.`);
             }
             catch (err) {
-                pluginCookie[name] = false;
+                DataStore.globals.pluginCookie[name] = false;
                 Utils.err("Plugins", name + " could not be started.", err);
-                bdpluginErrors.push({name: name, file: bdplugins[plugins[i]].filename, message: "start() could not be fired.", error: {message: err.message, stack: err.stack}});
+                DataStore.globals.bdpluginErrors.push({name: name, file: DataStore.globals.bdplugins[plugins[i]].filename, message: "start() could not be fired.", error: {message: err.message, stack: err.stack}});
             }
         }
     }
@@ -1711,12 +1766,12 @@ PluginModule.prototype.loadPlugins = function () {
 
 PluginModule.prototype.startPlugin = function(plugin, reload = false) {
     try {
-        bdplugins[plugin].plugin.start();
-        if (settingsCookie["fork-ps-2"] && !reload) mainCore.showToast(`${bdplugins[plugin].plugin.getName()} v${bdplugins[plugin].plugin.getVersion()} has started.`);
+        DataStore.globals.bdplugins[plugin].plugin.start();
+        if (DataStore.globals.settingsCookie["fork-ps-2"] && !reload) mainCore.showToast(`${DataStore.globals.bdplugins[plugin].plugin.getName()} v${DataStore.globals.bdplugins[plugin].plugin.getVersion()} has started.`);
     }
     catch (err) {
-        if (settingsCookie["fork-ps-2"] && !reload) mainCore.showToast(`${bdplugins[plugin].plugin.getName()} v${bdplugins[plugin].plugin.getVersion()} could not be started.`, {type: "error"});
-        pluginCookie[plugin] = false;
+        if (DataStore.globals.settingsCookie["fork-ps-2"] && !reload) mainCore.showToast(`${DataStore.globals.bdplugins[plugin].plugin.getName()} v${DataStore.globals.bdplugins[plugin].plugin.getVersion()} could not be started.`, {type: "error"});
+        DataStore.globals.pluginCookie[plugin] = false;
         this.savePluginData();
         Utils.err("Plugins", plugin + " could not be started.", err);
     }
@@ -1724,18 +1779,18 @@ PluginModule.prototype.startPlugin = function(plugin, reload = false) {
 
 PluginModule.prototype.stopPlugin = function(plugin, reload = false) {
     try {
-        bdplugins[plugin].plugin.stop();
-        if (settingsCookie["fork-ps-2"] && !reload) mainCore.showToast(`${bdplugins[plugin].plugin.getName()} v${bdplugins[plugin].plugin.getVersion()} has stopped.`);
+        DataStore.globals.bdplugins[plugin].plugin.stop();
+        if (DataStore.globals.settingsCookie["fork-ps-2"] && !reload) mainCore.showToast(`${DataStore.globals.bdplugins[plugin].plugin.getName()} v${DataStore.globals.bdplugins[plugin].plugin.getVersion()} has stopped.`);
     }
     catch (err) {
-        if (settingsCookie["fork-ps-2"] && !reload) mainCore.showToast(`${bdplugins[plugin].plugin.getName()} v${bdplugins[plugin].plugin.getVersion()} could not be stopped.`, {type: "error"});
-        Utils.err("Plugins", bdplugins[plugin].plugin.getName() + " could not be stopped.", err);
+        if (DataStore.globals.settingsCookie["fork-ps-2"] && !reload) mainCore.showToast(`${DataStore.globals.bdplugins[plugin].plugin.getName()} v${DataStore.globals.bdplugins[plugin].plugin.getVersion()} could not be stopped.`, {type: "error"});
+        Utils.err("Plugins", DataStore.globals.bdplugins[plugin].plugin.getName() + " could not be stopped.", err);
     }
 };
 
 PluginModule.prototype.enablePlugin = function (plugin, reload = false) {
-    if (pluginCookie[plugin]) return;
-    pluginCookie[plugin] = true;
+    if (DataStore.globals.pluginCookie[plugin]) return;
+    DataStore.globals.pluginCookie[plugin] = true;
     this.savePluginData();
     this.startPlugin(plugin, reload);
 };
@@ -1745,8 +1800,8 @@ PluginModule.prototype.enable = function (plugin, reload = false) {
 };
 
 PluginModule.prototype.disablePlugin = function (plugin, reload = false) {
-    if (!pluginCookie[plugin]) return;
-    pluginCookie[plugin] = false;
+    if (!DataStore.globals.pluginCookie[plugin]) return;
+    DataStore.globals.pluginCookie[plugin] = false;
     this.savePluginData();
     this.stopPlugin(plugin, reload);
 };
@@ -1756,58 +1811,58 @@ PluginModule.prototype.disable = function (plugin, reload = false) {
 };
 
 PluginModule.prototype.togglePlugin = function (plugin) {
-    if (pluginCookie[plugin]) this.disablePlugin(plugin);
+    if (DataStore.globals.pluginCookie[plugin]) this.disablePlugin(plugin);
     else this.enablePlugin(plugin);
 };
 
 PluginModule.prototype.loadPlugin = function(filename) {
     const error = ContentManager.loadContent(filename, "plugin");
     if (error) {
-        if (settingsCookie["fork-ps-1"]) mainCore.showContentErrors({plugins: [error]});
-        if (settingsCookie["fork-ps-2"]) BdApi.showToast(`${filename} could not be loaded.`, {type: "error"});
+        if (DataStore.globals.settingsCookie["fork-ps-1"]) mainCore.showContentErrors({plugins: [error]});
+        if (DataStore.globals.settingsCookie["fork-ps-2"]) BdApi.showToast(`${filename} could not be loaded.`, {type: "error"});
         return Utils.err("ContentManager", `${filename} could not be loaded.`, error);
     }
-    const plugin = Object.values(bdplugins).find(p => p.filename == filename).plugin;
+    const plugin = Object.values(DataStore.globals.bdplugins).find(p => p.filename == filename).plugin;
     try { if (plugin.load && typeof(plugin.load) == "function") plugin.load();}
-    catch (err) {if (settingsCookie["fork-ps-1"]) mainCore.showContentErrors({plugins: [err]});}
+    catch (err) {if (DataStore.globals.settingsCookie["fork-ps-1"]) mainCore.showContentErrors({plugins: [err]});}
     Utils.log("ContentManager", `${plugin.getName()} v${plugin.getVersion()} was loaded.`);
-    if (settingsCookie["fork-ps-2"]) BdApi.showToast(`${plugin.getName()} v${plugin.getVersion()} was loaded.`, {type: "success"});
+    if (DataStore.globals.settingsCookie["fork-ps-2"]) BdApi.showToast(`${plugin.getName()} v${plugin.getVersion()} was loaded.`, {type: "success"});
     BDEvents.dispatch("plugin-loaded", plugin.getName());
 };
 
 PluginModule.prototype.unloadPlugin = function(filenameOrName) {
-    const bdplugin = Object.values(bdplugins).find(p => p.filename == filenameOrName) || bdplugins[filenameOrName];
+    const bdplugin = Object.values(DataStore.globals.bdplugins).find(p => p.filename == filenameOrName) || DataStore.globals.bdplugins[filenameOrName];
     if (!bdplugin) return;
     const plugin = bdplugin.plugin.getName();
-    if (pluginCookie[plugin]) this.disablePlugin(plugin, true);
-    const error = ContentManager.unloadContent(bdplugins[plugin].filename, "plugin");
-    delete bdplugins[plugin];
+    if (DataStore.globals.pluginCookie[plugin]) this.disablePlugin(plugin, true);
+    const error = ContentManager.unloadContent(DataStore.globals.bdplugins[plugin].filename, "plugin");
+    delete DataStore.globals.bdplugins[plugin];
     if (error) {
-        if (settingsCookie["fork-ps-1"]) mainCore.showContentErrors({plugins: [error]});
-        if (settingsCookie["fork-ps-2"]) BdApi.showToast(`${plugin} could not be unloaded. It may have not been loaded yet.`, {type: "error"});
+        if (DataStore.globals.settingsCookie["fork-ps-1"]) mainCore.showContentErrors({plugins: [error]});
+        if (DataStore.globals.settingsCookie["fork-ps-2"]) BdApi.showToast(`${plugin} could not be unloaded. It may have not been loaded yet.`, {type: "error"});
         return Utils.err("ContentManager", `${plugin} could not be unloaded. It may have not been loaded yet.`, error);
     }
     Utils.log("ContentManager", `${plugin} was unloaded.`);
-    if (settingsCookie["fork-ps-2"]) BdApi.showToast(`${plugin} was unloaded.`, {type: "success"});
+    if (DataStore.globals.settingsCookie["fork-ps-2"]) BdApi.showToast(`${plugin} was unloaded.`, {type: "success"});
     BDEvents.dispatch("plugin-unloaded", plugin);
 };
 
 PluginModule.prototype.reloadPlugin = function(filenameOrName) {
-    const bdplugin = Object.values(bdplugins).find(p => p.filename == filenameOrName) || bdplugins[filenameOrName];
+    const bdplugin = Object.values(DataStore.globals.bdplugins).find(p => p.filename == filenameOrName) || DataStore.globals.bdplugins[filenameOrName];
     if (!bdplugin) return this.loadPlugin(filenameOrName);
     const plugin = bdplugin.plugin.getName();
-    const enabled = pluginCookie[plugin];
+    const enabled = DataStore.globals.pluginCookie[plugin];
     if (enabled) this.stopPlugin(plugin, true);
-    const error = ContentManager.reloadContent(bdplugins[plugin].filename, "plugin");
+    const error = ContentManager.reloadContent(DataStore.globals.bdplugins[plugin].filename, "plugin");
     if (error) {
-        if (settingsCookie["fork-ps-1"]) mainCore.showContentErrors({plugins: [error]});
-        if (settingsCookie["fork-ps-2"]) BdApi.showToast(`${plugin} could not be reloaded.`, {type: "error"});
+        if (DataStore.globals.settingsCookie["fork-ps-1"]) mainCore.showContentErrors({plugins: [error]});
+        if (DataStore.globals.settingsCookie["fork-ps-2"]) BdApi.showToast(`${plugin} could not be reloaded.`, {type: "error"});
         return Utils.err("ContentManager", `${plugin} could not be reloaded.`, error);
     }
-    if (bdplugins[plugin].plugin.load && typeof(bdplugins[plugin].plugin.load) == "function") bdplugins[plugin].plugin.load();
+    if (DataStore.globals.bdplugins[plugin].plugin.load && typeof(DataStore.globals.bdplugins[plugin].plugin.load) == "function") DataStore.globals.bdplugins[plugin].plugin.load();
     if (enabled) this.startPlugin(plugin, true);
-    Utils.log("ContentManager", `${plugin} v${bdplugins[plugin].plugin.getVersion()} was reloaded.`);
-    if (settingsCookie["fork-ps-2"]) BdApi.showToast(`${plugin} v${bdplugins[plugin].plugin.getVersion()} was reloaded.`, {type: "success"});
+    Utils.log("ContentManager", `${plugin} v${DataStore.globals.bdplugins[plugin].plugin.getVersion()} was reloaded.`);
+    if (DataStore.globals.settingsCookie["fork-ps-2"]) BdApi.showToast(`${plugin} v${DataStore.globals.bdplugins[plugin].plugin.getVersion()} was reloaded.`, {type: "success"});
     BDEvents.dispatch("plugin-reloaded", plugin);
 };
 
@@ -1820,19 +1875,19 @@ PluginModule.prototype.updatePluginList = function() {
 PluginModule.prototype.loadPluginData = function () {
     let saved = DataStore.getSettingGroup("plugins");
     if (saved) {
-        pluginCookie = saved;
+        Object.assign(DataStore.globals.pluginCookie, saved);
     }
 };
 
 PluginModule.prototype.savePluginData = function () {
-    DataStore.setSettingGroup("plugins", pluginCookie);
+    DataStore.setSettingGroup("plugins", DataStore.globals.pluginCookie);
 };
 
 PluginModule.prototype.newMessage = function () {
-    var plugins = Object.keys(bdplugins);
+    var plugins = Object.keys(DataStore.globals.bdplugins);
     for (var i = 0; i < plugins.length; i++) {
-        var plugin = bdplugins[plugins[i]].plugin;
-        if (!pluginCookie[plugin.getName()]) continue;
+        var plugin = DataStore.globals.bdplugins[plugins[i]].plugin;
+        if (!DataStore.globals.pluginCookie[plugin.getName()]) continue;
         if (typeof plugin.onMessage === "function") {
             try { plugin.onMessage(); }
             catch (err) { Utils.err("Plugins", "Unable to fire onMessage for " + plugin.getName() + ".", err); }
@@ -1841,10 +1896,10 @@ PluginModule.prototype.newMessage = function () {
 };
 
 PluginModule.prototype.channelSwitch = function () {
-    var plugins = Object.keys(bdplugins);
+    var plugins = Object.keys(DataStore.globals.bdplugins);
     for (var i = 0; i < plugins.length; i++) {
-        var plugin = bdplugins[plugins[i]].plugin;
-        if (!pluginCookie[plugin.getName()]) continue;
+        var plugin = DataStore.globals.bdplugins[plugins[i]].plugin;
+        if (!DataStore.globals.pluginCookie[plugin.getName()]) continue;
         if (typeof plugin.onSwitch === "function") {
             try { plugin.onSwitch(); }
             catch (err) { Utils.err("Plugins", "Unable to fire onSwitch for " + plugin.getName() + ".", err); }
@@ -1853,10 +1908,10 @@ PluginModule.prototype.channelSwitch = function () {
 };
 
 PluginModule.prototype.rawObserver = function(e) {
-    var plugins = Object.keys(bdplugins);
+    var plugins = Object.keys(DataStore.globals.bdplugins);
     for (var i = 0; i < plugins.length; i++) {
-        var plugin = bdplugins[plugins[i]].plugin;
-        if (!pluginCookie[plugin.getName()]) continue;
+        var plugin = DataStore.globals.bdplugins[plugins[i]].plugin;
+        if (!DataStore.globals.pluginCookie[plugin.getName()]) continue;
         if (typeof plugin.observer === "function") {
             try { plugin.observer(e); }
             catch (err) { Utils.err("Plugins", "Unable to fire observer for " + plugin.getName() + ".", err); }
@@ -1872,35 +1927,34 @@ PluginModule.prototype.rawObserver = function(e) {
  * https://github.com/Jiiks/BetterDiscordApp
  */
 
-var themeCookie = {};
-
 function ThemeModule() {
 
 }
 
 ThemeModule.prototype.loadThemes = function () {
     this.loadThemeData();
-    bdthemeErrors = ContentManager.loadThemes();
-    var themes = Object.keys(bdthemes);
+    const errors = ContentManager.loadThemes();
+    if (errors && errors.length) DataStore.globals.bdthemeErrors.splice(DataStore.globals.bdthemeErrors.length, 0, errors);
+    var themes = Object.keys(DataStore.globals.bdthemes);
 
     for (var i = 0; i < themes.length; i++) {
-        var theme = bdthemes[themes[i]];
-        if (!themeCookie[theme.name]) themeCookie[theme.name] = false;
-        if (themeCookie[theme.name]) $("head").append($("<style>", {id: theme.id, text: unescape(theme.css)}));
+        var theme = DataStore.globals.bdthemes[themes[i]];
+        if (!DataStore.globals.themeCookie[theme.name]) DataStore.globals.themeCookie[theme.name] = false;
+        if (DataStore.globals.themeCookie[theme.name]) $("head").append($("<style>", {id: theme.id, text: unescape(theme.css)}));
     }
-    for (let theme in themeCookie) {
-        if (!bdthemes[theme]) delete themeCookie[theme];
+    for (let theme in DataStore.globals.themeCookie) {
+        if (!DataStore.globals.bdthemes[theme]) delete DataStore.globals.themeCookie[theme];
     }
     this.saveThemeData();
     // if (settingsCookie["fork-ps-5"]) ContentManager.watchContent("theme");
 };
 
 ThemeModule.prototype.enableTheme = function(name, reload = false) {
-    themeCookie[name] = true;
+    DataStore.globals.themeCookie[name] = true;
     this.saveThemeData();
-    const theme = bdthemes[name];
+    const theme = DataStore.globals.bdthemes[name];
     $("head").append($("<style>", {id: theme.id, text: unescape(theme.css)}));
-    if (settingsCookie["fork-ps-2"] && !reload) mainCore.showToast(`${theme.name} v${theme.version} has been applied.`);
+    if (DataStore.globals.settingsCookie["fork-ps-2"] && !reload) mainCore.showToast(`${theme.name} v${theme.version} has been applied.`);
 };
 
 ThemeModule.prototype.enable = function (name, reload = false) {
@@ -1908,11 +1962,11 @@ ThemeModule.prototype.enable = function (name, reload = false) {
 };
 
 ThemeModule.prototype.disableTheme = function(name, reload = false) {
-    themeCookie[name] = false;
+    DataStore.globals.themeCookie[name] = false;
     this.saveThemeData();
-    const theme = bdthemes[name];
+    const theme = DataStore.globals.bdthemes[name];
     $(`#${theme.id}`).remove();
-    if (settingsCookie["fork-ps-2"] && !reload) mainCore.showToast(`${theme.name} v${theme.version} has been disabled.`);
+    if (DataStore.globals.settingsCookie["fork-ps-2"] && !reload) mainCore.showToast(`${theme.name} v${theme.version} has been disabled.`);
 };
 
 ThemeModule.prototype.disable = function (name, reload = false) {
@@ -1920,53 +1974,53 @@ ThemeModule.prototype.disable = function (name, reload = false) {
 };
 
 ThemeModule.prototype.toggleTheme = function(theme) {
-    if (themeCookie[theme]) this.disableTheme(theme);
+    if (DataStore.globals.themeCookie[theme]) this.disableTheme(theme);
     else this.enableTheme(theme);
 };
 
 ThemeModule.prototype.loadTheme = function(filename) {
     const error = ContentManager.loadContent(filename, "theme");
     if (error) {
-        if (settingsCookie["fork-ps-1"]) mainCore.showContentErrors({themes: [error]});
-        if (settingsCookie["fork-ps-2"]) BdApi.showToast(`${filename} could not be loaded. It may not have been loaded.`, {type: "error"});
+        if (DataStore.globals.settingsCookie["fork-ps-1"]) mainCore.showContentErrors({themes: [error]});
+        if (DataStore.globals.settingsCookie["fork-ps-2"]) BdApi.showToast(`${filename} could not be loaded. It may not have been loaded.`, {type: "error"});
         return Utils.err("ContentManager", `${filename} could not be loaded.`, error);
     }
-    const theme = Object.values(bdthemes).find(p => p.filename == filename);
+    const theme = Object.values(DataStore.globals.bdthemes).find(p => p.filename == filename);
     Utils.log("ContentManager", `${theme.name} v${theme.version} was loaded.`);
-    if (settingsCookie["fork-ps-2"]) BdApi.showToast(`${theme.name} v${theme.version} was loaded.`, {type: "success"});
+    if (DataStore.globals.settingsCookie["fork-ps-2"]) BdApi.showToast(`${theme.name} v${theme.version} was loaded.`, {type: "success"});
     BDEvents.dispatch("theme-loaded", theme.name);
 };
 
 ThemeModule.prototype.unloadTheme = function(filenameOrName) {
-    const bdtheme = Object.values(bdthemes).find(p => p.filename == filenameOrName) || bdthemes[filenameOrName];
+    const bdtheme = Object.values(DataStore.globals.bdthemes).find(p => p.filename == filenameOrName) || DataStore.globals.bdthemes[filenameOrName];
     if (!bdtheme) return;
     const theme = bdtheme.name;
-    if (themeCookie[theme]) this.disableTheme(theme, true);
-    const error = ContentManager.unloadContent(bdthemes[theme].filename, "theme");
-    delete bdthemes[theme];
+    if (DataStore.globals.themeCookie[theme]) this.disableTheme(theme, true);
+    const error = ContentManager.unloadContent(DataStore.globals.bdthemes[theme].filename, "theme");
+    delete DataStore.globals.bdthemes[theme];
     if (error) {
-        if (settingsCookie["fork-ps-1"]) mainCore.showContentErrors({themes: [error]});
-        if (settingsCookie["fork-ps-2"]) BdApi.showToast(`${theme} could not be unloaded. It may have not been loaded yet.`, {type: "error"});
+        if (DataStore.globals.settingsCookie["fork-ps-1"]) mainCore.showContentErrors({themes: [error]});
+        if (DataStore.globals.settingsCookie["fork-ps-2"]) BdApi.showToast(`${theme} could not be unloaded. It may have not been loaded yet.`, {type: "error"});
         return Utils.err("ContentManager", `${theme} could not be unloaded. It may have not been loaded yet.`, error);
     }
     Utils.log("ContentManager", `${theme} was unloaded.`);
-    if (settingsCookie["fork-ps-2"]) BdApi.showToast(`${theme} was unloaded.`, {type: "success"});
+    if (DataStore.globals.settingsCookie["fork-ps-2"]) BdApi.showToast(`${theme} was unloaded.`, {type: "success"});
     BDEvents.dispatch("theme-unloaded", theme);
 };
 
 ThemeModule.prototype.reloadTheme = function(filenameOrName) {
-    const bdtheme = Object.values(bdthemes).find(p => p.filename == filenameOrName) || bdthemes[filenameOrName];
+    const bdtheme = Object.values(DataStore.globals.bdthemes).find(p => p.filename == filenameOrName) || DataStore.globals.bdthemes[filenameOrName];
     if (!bdtheme) return this.loadTheme(filenameOrName);
     const theme = bdtheme.name;
-    const error = ContentManager.reloadContent(bdthemes[theme].filename, "theme");
-    if (themeCookie[theme]) this.disableTheme(theme, true), this.enableTheme(theme, true);
+    const error = ContentManager.reloadContent(DataStore.globals.bdthemes[theme].filename, "theme");
+    if (DataStore.globals.themeCookie[theme]) this.disableTheme(theme, true), this.enableTheme(theme, true);
     if (error) {
-        if (settingsCookie["fork-ps-1"]) mainCore.showContentErrors({themes: [error]});
-        if (settingsCookie["fork-ps-2"]) BdApi.showToast(`${theme} could not be reloaded.`, {type: "error"});
+        if (DataStore.globals.settingsCookie["fork-ps-1"]) mainCore.showContentErrors({themes: [error]});
+        if (DataStore.globals.settingsCookie["fork-ps-2"]) BdApi.showToast(`${theme} could not be reloaded.`, {type: "error"});
         return Utils.err("ContentManager", `${theme} could not be reloaded.`, error);
     }
-    Utils.log("ContentManager", `${theme} v${bdthemes[theme].version} was reloaded.`);
-    if (settingsCookie["fork-ps-2"]) BdApi.showToast(`${theme} v${bdthemes[theme].version} was reloaded.`, {type: "success"});
+    Utils.log("ContentManager", `${theme} v${DataStore.globals.bdthemes[theme].version} was reloaded.`);
+    if (DataStore.globals.settingsCookie["fork-ps-2"]) BdApi.showToast(`${theme} v${DataStore.globals.bdthemes[theme].version} was reloaded.`, {type: "success"});
     BDEvents.dispatch("theme-reloaded", theme);
 };
 
@@ -1979,12 +2033,12 @@ ThemeModule.prototype.updateThemeList = function() {
 ThemeModule.prototype.loadThemeData = function() {
     let saved = DataStore.getSettingGroup("themes");
     if (saved) {
-        themeCookie = saved;
+        Object.assign(DataStore.globals.themeCookie, saved);
     }
 };
 
 ThemeModule.prototype.saveThemeData = function () {
-    DataStore.setSettingGroup("themes", themeCookie);
+    DataStore.setSettingGroup("themes", DataStore.globals.themeCookie);
 };
 
 
@@ -2051,19 +2105,19 @@ var BdApi = {
         if (!realLocation) return this._windowConfigFile = null;
         return this._windowConfigFile = realLocation;
     },
-    get bdSettings() {return settings;},
-    get emotes() {return bdEmotes;},
+    get settings() {return DataStore.globals.settings;},
+    get emotes() {return DataStore.globals.bdEmotes;},
     get screenWidth() { return Math.max(document.documentElement.clientWidth, window.innerWidth || 0); },
     get screenHeight() { return Math.max(document.documentElement.clientHeight, window.innerHeight || 0); },
     get Plugins() {
         if (this._Plugins) return this._Plugins;
         if (!pluginModule) return null;
-        return this._Plugins = new AddonAPI(pluginCookie, bdplugins, pluginModule);
+        return this._Plugins = new AddonAPI(DataStore.globals.pluginCookie, DataStore.globals.bdplugins, pluginModule);
     },
     get Themes() {
         if (this._Themes) return this._Themes;
         if (!themeModule) return null;
-        return this._Themes = new AddonAPI(themeCookie, bdthemes, themeModule);
+        return this._Themes = new AddonAPI(DataStore.globals.themeCookie, DataStore.globals.bdthemes, themeModule);
     }
 };
 
@@ -2115,8 +2169,8 @@ BdApi.unlinkJS = function (id) {
 //Get another plugin
 //name = name of plugin
 BdApi.getPlugin = function (name) {
-    if (bdplugins.hasOwnProperty(name)) {
-        return bdplugins[name].plugin;
+    if (DataStore.globals.bdplugins.hasOwnProperty(name)) {
+        return DataStore.globals.bdplugins[name].plugin;
     }
     return null;
 };
@@ -2262,15 +2316,15 @@ BdApi.testJSON = function(data) {
 };
 
 BdApi.isPluginEnabled = function(name) {
-    return !!pluginCookie[name];
+    return !!DataStore.globals.pluginCookie[name];
 };
 
 BdApi.isThemeEnabled = function(name) {
-    return !!themeCookie[name];
+    return !!DataStore.globals.themeCookie[name];
 };
 
 BdApi.isSettingEnabled = function(id) {
-    return !!settingsCookie[id];
+    return !!DataStore.globals.settingsCookie[id];
 };
 
 BdApi.enableSetting = function(id) {
@@ -2282,7 +2336,7 @@ BdApi.disableSetting = function(id) {
 };
 
 BdApi.toggleSetting = function(id) {
-    return settingsPanel.onChange(id, !settingsCookie[id]);
+    return settingsPanel.onChange(id, !DataStore.globals.settingsCookie[id]);
 };
 
 // Gets data
@@ -2787,16 +2841,6 @@ class V2 {
         this.ChannelActions.openPrivateChannel(selfId, userId);
     }
 
-    parseSettings(cat) {
-        return Object.keys(settings).reduce((arr, key) => {
-            let setting = settings[key];
-            if (setting.cat === cat && setting.implemented && !setting.hidden) {
-                setting.text = key;
-                arr.push(setting);
-            } return arr;
-        }, []);
-    }
-
     patchSocial() {
         if (this.socialPatch) return;
         const TabBar = BdApi.findModule(m => m.displayName == "TabBar");
@@ -2819,8 +2863,8 @@ class V2 {
 
             const BBDLink = BdApi.React.createElement(Anchor, {className: "bd-social-link", href: "https://twitter.com/BandagedBD", title: "BandagedBD", target: "_blank"}, "BandagedBD");
             const AuthorLink = BdApi.React.createElement(Anchor, {className: "bd-social-link", href: "https://twitter.com/ZackRauen", title: "Zerebos", target: "_blank"}, "Zerebos");
-            const additional = BDV2.react.createElement("div", {className: "colorMuted-HdFt4q size12-3cLvbJ"}, [BBDLink, ` ${bbdVersion} by `, AuthorLink]);
-            const injector = BDV2.react.createElement("div", {className: "colorMuted-HdFt4q size12-3cLvbJ"}, ["BBD Injector", ` ${bdConfig.version} by `, AuthorLink]);
+            const additional = BDV2.react.createElement("div", {className: "colorMuted-HdFt4q size12-3cLvbJ"}, [BBDLink, ` ${DataStore.globals.bbdVersion} by `, AuthorLink]);
+            const injector = BDV2.react.createElement("div", {className: "colorMuted-HdFt4q size12-3cLvbJ"}, ["BBD Injector", ` ${DataStore.config.version} by `, AuthorLink]);
 
             const originalVersions = children[children.length - 1].type;
             children[children.length - 1].type = function() {
@@ -2925,7 +2969,7 @@ class BDEmote extends BDV2.reactComponent {
     }
 
     get animateOnHover() {
-        return settingsCookie["fork-es-2"];
+        return DataStore.globals.settingsCookie["fork-es-2"];
     }
 
     get label() {
@@ -3007,7 +3051,7 @@ class V2C_SettingsPanel extends BDV2.reactComponent {
             BDV2.react.createElement(V2Components.SettingsTitle, {text: this.props.title}),
             this.props.button && BDV2.react.createElement("button", {key: "title-button", className: "bd-pfbtn", onClick: this.props.button.onClick}, this.props.button.title),
             settings.map(setting => {
-                return BDV2.react.createElement(V2Components.Switch, {id: setting.id, key: setting.id, data: setting, checked: settingsCookie[setting.id], onChange: (id, checked) => {
+                return BDV2.react.createElement(V2Components.Switch, {id: setting.id, key: setting.id, data: setting, checked: DataStore.globals.settingsCookie[setting.id], onChange: (id, checked) => {
                         this.props.onChange(id, checked);
                     }});
             })
@@ -3027,7 +3071,7 @@ class V2C_SettingsGroup extends BDV2.reactComponent {
         return [BDV2.react.createElement(V2Components.SettingsTitle, {text: title}),
                 buttonComponent,
                 settings.map(setting => {
-                    return BDV2.react.createElement(V2Components.Switch, {id: setting.id, key: setting.id, data: setting, checked: settingsCookie[setting.id], onChange: (id, checked) => {
+                    return BDV2.react.createElement(V2Components.Switch, {id: setting.id, key: setting.id, data: setting, checked: DataStore.globals.settingsCookie[setting.id], onChange: (id, checked) => {
                         this.props.onChange(id, checked);
                     }});
                 })];
@@ -3398,7 +3442,7 @@ class V2C_CssEditorDetached extends BDV2.reactComponent {
         this.editor.setShowPrintMargin(false);
         this.editor.setFontSize(14);
         this.editor.on("change", () => {
-            if (!settingsCookie["bda-css-0"]) return;
+            if (!DataStore.globals.settingsCookie["bda-css-0"]) return;
             this.saveCss();
             this.updateCss();
         });
@@ -3471,7 +3515,7 @@ class V2C_CssEditorDetached extends BDV2.reactComponent {
                     BDV2.react.createElement(
                         "ul",
                         {className: "checkbox-group"},
-                        BDV2.react.createElement(V2Components.Checkbox, {id: "live-update", text: "Live Update", onChange: self.onChange, checked: settingsCookie["bda-css-0"]})
+                        BDV2.react.createElement(V2Components.Checkbox, {id: "live-update", text: "Live Update", onChange: self.onChange, checked: DataStore.globals.settingsCookie["bda-css-0"]})
                     ),
                     BDV2.react.createElement(
                         "div",
@@ -3511,7 +3555,7 @@ class V2C_CssEditorDetached extends BDV2.reactComponent {
     onChange(id, checked) {
         switch (id) {
             case "live-update":
-                settingsCookie["bda-css-0"] = checked;
+                DataStore.globals.settingsCookie["bda-css-0"] = checked;
                 mainCore.saveSettings();
                 break;
         }
@@ -3575,7 +3619,7 @@ class V2C_CssEditor extends BDV2.reactComponent {
         this.editor.setShowPrintMargin(false);
         this.editor.setFontSize(14);
         this.editor.on("change", () => {
-            if (!settingsCookie["bda-css-0"]) return;
+            if (!DataStore.globals.settingsCookie["bda-css-0"]) return;
             this.saveCss();
             this.updateCss();
         });
@@ -3658,7 +3702,7 @@ class V2C_CssEditor extends BDV2.reactComponent {
                     BDV2.react.createElement(
                         "ul",
                         {className: "checkbox-group"},
-                        BDV2.react.createElement(V2Components.Checkbox, {id: "live-update", text: "Live Update", onChange: this.onChange, checked: settingsCookie["bda-css-0"]})
+                        BDV2.react.createElement(V2Components.Checkbox, {id: "live-update", text: "Live Update", onChange: this.onChange, checked: DataStore.globals.settingsCookie["bda-css-0"]})
                     ),
                     BDV2.react.createElement(
                         "div",
@@ -3720,7 +3764,7 @@ class V2C_CssEditor extends BDV2.reactComponent {
     onChange(id, checked) {
         switch (id) {
             case "live-update":
-                settingsCookie["bda-css-0"] = checked;
+                DataStore.globals.settingsCookie["bda-css-0"] = checked;
                 mainCore.saveSettings();
                 break;
         }
@@ -3827,7 +3871,7 @@ class V2C_PluginCard extends BDV2.reactComponent {
 
     setInitialState() {
         this.state = {
-            checked: pluginCookie[this.props.plugin.getName()],
+            checked: DataStore.globals.pluginCookie[this.props.plugin.getName()],
             settings: false,
             reloads: 0
         };
@@ -3852,7 +3896,7 @@ class V2C_PluginCard extends BDV2.reactComponent {
                 this.refs.settingspanel.appendChild(this.settingsPanel);
             }
 
-            if (!settingsCookie["fork-ps-3"]) return;
+            if (!DataStore.globals.settingsCookie["fork-ps-3"]) return;
             const isHidden = (container, element) => {
 
                 const cTop = container.scrollTop;
@@ -3876,7 +3920,7 @@ class V2C_PluginCard extends BDV2.reactComponent {
     reload() {
         const plugin = this.props.plugin.getName();
         pluginModule.reloadPlugin(plugin);
-        this.props.plugin = bdplugins[plugin].plugin;
+        this.props.plugin = DataStore.globals.bdplugins[plugin].plugin;
         this.onReload(this.props.plugin.getName());
     }
 
@@ -3899,7 +3943,7 @@ class V2C_PluginCard extends BDV2.reactComponent {
         const author = this.getString(plugin.getAuthor());
         const description = this.getString(plugin.getDescription());
         const version = this.getString(plugin.getVersion());
-        const meta = bdplugins[name];
+        const meta = DataStore.globals.bdplugins[name];
 
         if (this.state.settings) {
             try { self.settingsPanel = plugin.getSettingsPanel(); }
@@ -3952,7 +3996,7 @@ class V2C_PluginCard extends BDV2.reactComponent {
                         BDV2.react.createElement(meta.authorLink || meta.authorId ? "a" : "span", authorProps, author)
                     ),
                     BDV2.react.createElement("div", {className: "bda-controls"},
-                        !settingsCookie["fork-ps-5"] && BDV2.react.createElement(V2Components.TooltipWrap(V2Components.ReloadIcon, {color: "black", side: "top", text: "Reload"}), {className: "bd-reload-card", onClick: this.reload}),
+                        !DataStore.globals.settingsCookie["fork-ps-5"] && BDV2.react.createElement(V2Components.TooltipWrap(V2Components.ReloadIcon, {color: "black", side: "top", text: "Reload"}), {className: "bd-reload-card", onClick: this.reload}),
                         BDV2.react.createElement("label", {className: "ui-switch-wrapper ui-flex-child", style: {flex: "0 0 auto"}},
                             BDV2.react.createElement("input", {checked: this.state.checked, onChange: this.onChange, className: "ui-switch-checkbox", type: "checkbox"}),
                             BDV2.react.createElement("div", {className: this.state.checked ? "ui-switch checked" : "ui-switch"})
@@ -3993,7 +4037,7 @@ class V2C_ThemeCard extends BDV2.reactComponent {
 
     setInitialState() {
         this.state = {
-            checked: themeCookie[this.props.theme.name],
+            checked: DataStore.globals.themeCookie[this.props.theme.name],
             reloads: 0
         };
     }
@@ -4014,10 +4058,10 @@ class V2C_ThemeCard extends BDV2.reactComponent {
     reload() {
         const theme = this.props.theme.name;
         const error = themeModule.reloadTheme(theme);
-        if (error) mainCore.showToast(`Could not reload ${bdthemes[theme].name}. Check console for details.`, {type: "error"});
-        else mainCore.showToast(`${bdthemes[theme].name} v${bdthemes[theme].version} has been reloaded.`, {type: "success"});
+        if (error) mainCore.showToast(`Could not reload ${DataStore.globals.bdthemes[theme].name}. Check console for details.`, {type: "error"});
+        else mainCore.showToast(`${DataStore.globals.bdthemes[theme].name} v${DataStore.globals.bdthemes[theme].version} has been reloaded.`, {type: "success"});
         // this.setState(this.state);
-        this.props.theme = bdthemes[theme];
+        this.props.theme = DataStore.globals.bdthemes[theme];
         this.onReload(this.props.theme.name);
     }
 
@@ -4034,7 +4078,7 @@ class V2C_ThemeCard extends BDV2.reactComponent {
         const description = theme.description;
         const version = theme.version;
         const author = theme.author;
-        const meta = bdthemes[name];
+        const meta = DataStore.globals.bdthemes[name];
 
         const links = [];
         if (meta.website) links.push(this.makeLink("Website", meta.website));
@@ -4070,7 +4114,7 @@ class V2C_ThemeCard extends BDV2.reactComponent {
                         BDV2.react.createElement(meta.authorLink || meta.authorId ? "a" : "span", authorProps, author)
                     ),
                     BDV2.react.createElement("div", {className: "bda-controls"},
-                        !settingsCookie["fork-ps-5"] && BDV2.react.createElement(V2Components.TooltipWrap(V2Components.ReloadIcon, {color: "black", side: "top", text: "Reload"}), {className: "bd-reload-card", onClick: this.reload}),
+                        !DataStore.globals.settingsCookie["fork-ps-5"] && BDV2.react.createElement(V2Components.TooltipWrap(V2Components.ReloadIcon, {color: "black", side: "top", text: "Reload"}), {className: "bd-reload-card", onClick: this.reload}),
                         BDV2.react.createElement("label", {className: "ui-switch-wrapper ui-flex-child", style: {flex: "0 0 auto"}},
                             BDV2.react.createElement("input", {checked: this.state.checked, onChange: this.onChange, className: "ui-switch-checkbox", type: "checkbox"}),
                             BDV2.react.createElement("div", {className: this.state.checked ? "ui-switch checked" : "ui-switch"})
@@ -4337,10 +4381,10 @@ class V2_SettingsPanel {
             return (isDonor || isPluginDev);
         };
         const shouldHaveBeta = checkForBetaAccess();
-        return Object.keys(settings).reduce((arr, key) => {
-            const setting = settings[key];
+        return Object.keys(DataStore.globals.settings).reduce((arr, key) => {
+            const setting = DataStore.globals.settings[key];
             if (setting.cat === category && setting.implemented && !setting.hidden) {
-                if (settings.category !== "beta" || (settings.category === "beta" && shouldHaveBeta)) {
+                if (DataStore.globals.settings.category !== "beta" || (DataStore.globals.settings.category === "beta" && shouldHaveBeta)) {
                     setting.text = key;
                     arr.push(setting);
                 }
@@ -4379,7 +4423,7 @@ class V2_SettingsPanel {
     }
 
     updateSettings(id, enabled) {
-        settingsCookie[id] = enabled;
+        DataStore.globals.settingsCookie[id] = enabled;
 
         // if (id == "bda-gs-b") {
         //     if (enabled) $("body").addClass("bd-blue");
@@ -4472,12 +4516,12 @@ class V2_SettingsPanel {
 
 
         if (id == "bda-gs-8") {
-            if (enabled) dMode.enable(settingsCookie["fork-dm-1"]);
+            if (enabled) dMode.enable(DataStore.globals.settingsCookie["fork-dm-1"]);
             else dMode.disable();
         }
 
         if (id == "fork-dm-1") {
-            if (settingsCookie["bda-gs-8"]) dMode.enable(enabled);
+            if (DataStore.globals.settingsCookie["bda-gs-8"]) dMode.enable(enabled);
         }
 
         mainCore.saveSettings();
@@ -4485,22 +4529,22 @@ class V2_SettingsPanel {
 
     initializeSettings() {
         // if (settingsCookie["bda-gs-b"]) $("body").addClass("bd-blue");
-        if (settingsCookie["bda-gs-2"]) $("body").addClass("bd-minimal");
-        if (settingsCookie["bda-gs-3"]) $("body").addClass("bd-minimal-chan");
-        if (settingsCookie["bda-gs-1"]) publicServersModule.addButton();
-        if (settingsCookie["bda-gs-4"]) voiceMode.enable();
-        if (settingsCookie["bda-gs-5"]) $("#app-mount").addClass("bda-dark");
-        if (settingsCookie["bda-gs-6"]) mainCore.inject24Hour();
-        if (settingsCookie["bda-gs-7"]) mainCore.injectColoredText();
-        if (settingsCookie["bda-es-4"]) emoteModule.autoCapitalize();
-        if (settingsCookie["fork-ps-4"]) ClassNormalizer.start();
+        if (DataStore.globals.settingsCookie["bda-gs-2"]) $("body").addClass("bd-minimal");
+        if (DataStore.globals.settingsCookie["bda-gs-3"]) $("body").addClass("bd-minimal-chan");
+        if (DataStore.globals.settingsCookie["bda-gs-1"]) publicServersModule.addButton();
+        if (DataStore.globals.settingsCookie["bda-gs-4"]) voiceMode.enable();
+        if (DataStore.globals.settingsCookie["bda-gs-5"]) $("#app-mount").addClass("bda-dark");
+        if (DataStore.globals.settingsCookie["bda-gs-6"]) mainCore.inject24Hour();
+        if (DataStore.globals.settingsCookie["bda-gs-7"]) mainCore.injectColoredText();
+        if (DataStore.globals.settingsCookie["bda-es-4"]) emoteModule.autoCapitalize();
+        if (DataStore.globals.settingsCookie["fork-ps-4"]) ClassNormalizer.start();
 
-        if (settingsCookie["fork-ps-5"]) {
+        if (DataStore.globals.settingsCookie["fork-ps-5"]) {
             ContentManager.watchContent("plugin");
             ContentManager.watchContent("theme");
         }
 
-        if (settingsCookie["bda-gs-8"]) dMode.enable(settingsCookie["fork-dm-1"]);
+        if (DataStore.globals.settingsCookie["bda-gs-8"]) dMode.enable(DataStore.globals.settingsCookie["fork-dm-1"]);
 
         mainCore.saveSettings();
     }
@@ -4569,11 +4613,11 @@ class V2_SettingsPanel {
     }
 
     get pluginsComponent() {
-        let plugins = Object.keys(bdplugins).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase())).reduce((arr, key) => {
-            arr.push(BDV2.react.createElement(V2Components.PluginCard, {key: key, plugin: bdplugins[key].plugin}));return arr;
+        let plugins = Object.keys(DataStore.globals.bdplugins).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase())).reduce((arr, key) => {
+            arr.push(BDV2.react.createElement(V2Components.PluginCard, {key: key, plugin: DataStore.globals.bdplugins[key].plugin}));return arr;
         }, []);
         let list = BDV2.react.createElement(V2Components.List, {key: "plugin-list", className: "bda-slist", children: plugins});
-        let refreshIcon = !settingsCookie["fork-ps-5"] && BDV2.react.createElement(V2Components.TooltipWrap(V2Components.ReloadIcon, {color: "black", side: "top", text: "Reload Plugin List"}), {className: "bd-reload-header", size: "18px", onClick: async () => {
+        let refreshIcon = !DataStore.globals.settingsCookie["fork-ps-5"] && BDV2.react.createElement(V2Components.TooltipWrap(V2Components.ReloadIcon, {color: "black", side: "top", text: "Reload Plugin List"}), {className: "bd-reload-header", size: "18px", onClick: async () => {
             pluginModule.updatePluginList();
             this.sideBarOnClick("plugins");
         }});
@@ -4583,11 +4627,11 @@ class V2_SettingsPanel {
     }
 
     get themesComponent() {
-        let themes = Object.keys(bdthemes).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase())).reduce((arr, key) => {
-            arr.push(BDV2.react.createElement(V2Components.ThemeCard, {key: key, theme: bdthemes[key]}));return arr;
+        let themes = Object.keys(DataStore.globals.bdthemes).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase())).reduce((arr, key) => {
+            arr.push(BDV2.react.createElement(V2Components.ThemeCard, {key: key, theme: DataStore.globals.bdthemes[key]}));return arr;
         }, []);
         let list = BDV2.react.createElement(V2Components.List, {key: "theme-list", className: "bda-slist", children: themes});
-        let refreshIcon = !settingsCookie["fork-ps-5"] && BDV2.react.createElement(V2Components.TooltipWrap(V2Components.ReloadIcon, {color: "black", side: "top", text: "Reload Theme List"}), {className: "bd-reload-header", size: "18px", onClick: async () => {
+        let refreshIcon = !DataStore.globals.settingsCookie["fork-ps-5"] && BDV2.react.createElement(V2Components.TooltipWrap(V2Components.ReloadIcon, {color: "black", side: "top", text: "Reload Theme List"}), {className: "bd-reload-header", size: "18px", onClick: async () => {
             themeModule.updateThemeList();
             this.sideBarOnClick("themes");
         }});
@@ -4813,7 +4857,7 @@ class V2_PublicServers {
         let btn = $("<div/>", {
             "class": BDV2.guildClasses.listItem,
             "id": "bd-pub-li",
-            "style": settingsCookie["bda-gs-1"] ? "" : "display: none;"
+            "style": DataStore.globals.settingsCookie["bda-gs-1"] ? "" : "display: none;"
         }).append($("<div/>", {
             "class": "wrapper-25eVIn " + BDV2.guildClasses.circleButtonMask,
             "text": "public",
