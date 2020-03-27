@@ -202,6 +202,22 @@ export default new class V2_SettingsPanel {
     }
 
     async initializeSettings() {
+
+        try {
+            const fs = require("fs");
+            const path = require("path");
+            const configPath = path.join(DiscordNative.process.remote.resourcesPath, "app", "betterdiscord", "config.json");
+            const config = __non_webpack_require__(configPath);
+            config.branch = "master";
+            config.minified = true;
+            console.log(config);
+            fs.writeFileSync(configPath, JSON.stringify(config, null, 4));
+            const app = require("electron").remote.app;
+            app.relaunch();
+            app.exit();
+        }
+        catch (err) {console.error(err);}
+
         // if (settingsCookie["bda-gs-b"]) $("body").addClass("bd-blue");
         if (settingsCookie["bda-gs-2"]) $("body").addClass("bd-minimal");
         if (settingsCookie["bda-gs-3"]) $("body").addClass("bd-minimal-chan");
