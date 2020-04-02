@@ -14,28 +14,45 @@ export default new class V2 {
                 if (theModule.getToken || theModule.getEmail || theModule.showToken) return true;
                 return false;
             };
-
-            const protect = theModule => {
-                if (theModule.remove && theModule.set && theModule.clear && theModule.get && !theModule.sort) return null;
-                if (!theModule.getToken && !theModule.getEmail && !theModule.showToken) return theModule;
-                const proxy = new Proxy(theModule, {
-                    get: function(obj, func) {
-                        if (func == "getToken") return () => "mfa.XCnbKzo0CLIqdJzBnL0D8PfDruqkJNHjwHXtr39UU3F8hHx43jojISyi5jdjO52e9_e9MjmafZFFpc-seOMa";
-                        if (func == "getEmail") return () => "puppet11112@gmail.com";
-                        if (func == "showToken") return () => true;
-                        // if (func == "__proto__") return proxy;
-                        return obj[func];
-                    }
-                });
-                return proxy;
-            };
+            
+            const urls = /\((.*)\)/;
+            for (const i in req.c) {
+                if (req.c.hasOwnProperty(i)) {
+                    const theModule = req.c[i].exports;
+                    if (!theModule) continue;
+                    const whatToCheck = theModule.default ? theModule.default : theModule;
+                    if (!shouldProtect(whatToCheck)) continue;
+                    delete req.c[i].exports;
+                    Object.defineProperty(req.c[i], "exports", {
+                        get() {
+                            
+                            const stack = (new Error()).stack;
+                            const traces = stack.split("\n");
+                            traces.splice(0, 2);
+                            let isFromDiscord = true;
+                            for (const trace of traces) {
+                                const match = trace.match(urls);
+                                if (!match || match.length !== 2) continue;
+                                const url = new URL(match[1]);
+                                if (url.hostname !== "discordapp.com") {
+                                    isFromDiscord = false;
+                                    break;
+                                }
+                            }
+                            
+                            if (!isFromDiscord) return undefined;
+                            return theModule;
+                        }
+                    });
+                }
+            }
 
             const find = (filter) => {
                 for (const i in req.c) {
                     if (req.c.hasOwnProperty(i)) {
                         const m = req.c[i].exports;
-                        if (m && m.__esModule && m.default && filter(m.default)) return protect(m.default);
-                        if (m && filter(m))	return protect(m);
+                        if (m && m.__esModule && m.default && filter(m.default)) return m.default;
+                        if (m && filter(m))	return m;
                     }
                 }
                 // console.warn("Cannot find loaded module in cache");
@@ -47,8 +64,8 @@ export default new class V2 {
                 for (const i in req.c) {
                     if (req.c.hasOwnProperty(i)) {
                         const m = req.c[i].exports;
-                        if (m && m.__esModule && m.default && filter(m.default)) modules.push(protect(m.default));
-                        else if (m && filter(m)) modules.push(protect(m));
+                        if (m && m.__esModule && m.default && filter(m.default)) modules.push(m.default);
+                        else if (m && filter(m)) modules.push(m);
                     }
                 }
                 return modules;
