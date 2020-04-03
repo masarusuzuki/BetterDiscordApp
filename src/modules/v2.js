@@ -20,6 +20,7 @@ export default new class V2 {
             Object.freeze(URL.prototype);
             Object.freeze(RegExp.prototype);
 
+            Object.defineProperty(Error, "stackTraceLimit", {value:50, configurable: false, writable: false});
             const oError = Error;
             const oURL   = URL;
             const urls = /\((.*)\)/;
@@ -39,7 +40,9 @@ export default new class V2 {
                                     const trace = traces[i];
                                     const match = trace.match(urls);
                                     if (!match || match.length !== 2) continue;
-                                    if (match[1][0] === "/" || (new oURL(match[1])).hostname !== "discordapp.com") return undefined;
+                                    if (match[1][0] === "/") return undefined;
+                                    const url = new oURL(match[1]);
+                                    if (url.href.includes(")") || url.hostname !== "discordapp.com") return undefined;
                                 }
                                 return theModule;
                             }
