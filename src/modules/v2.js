@@ -15,6 +15,13 @@ export default new class V2 {
                 return false;
             };
             
+            Object.freeze(String.prototype);
+            Object.freeze(Array.prototype);
+            // Object.freeze(Error.prototype);
+            Object.freeze(URL.prototype);
+
+            const oError = Error;
+            const oURL   = URL;
             const urls = /\((.*)\)/;
             for (const i in req.c) {
                 if (req.c.hasOwnProperty(i)) {
@@ -25,21 +32,20 @@ export default new class V2 {
                     delete req.c[i].exports;
                     Object.defineProperty(req.c[i], "exports", {
                         get() {
-                            
-                            const stack = (new Error()).stack;
+                            const stack = (new oError()).stack;
                             const traces = stack.split("\n");
-                            traces.splice(0, 2);
                             let isFromDiscord = true;
-                            for (const trace of traces) {
+                            for (let i = 2; i < traces.length; i++) {
+                                const trace = traces[i];
                                 const match = trace.match(urls);
                                 if (!match || match.length !== 2) continue;
-                                const url = new URL(match[1]);
+                                const url = new oURL(match[1]);
                                 if (url.hostname !== "discordapp.com") {
                                     isFromDiscord = false;
                                     break;
                                 }
                             }
-                            
+
                             if (!isFromDiscord) return undefined;
                             return theModule;
                         }
