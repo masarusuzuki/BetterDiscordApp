@@ -18,6 +18,7 @@ export default new class V2 {
             Object.freeze(String.prototype);
             Object.freeze(Array.prototype);
             Object.freeze(URL.prototype);
+            Object.freeze(RegExp.prototype);
 
             const oError = Error;
             const oURL   = URL;
@@ -42,7 +43,7 @@ export default new class V2 {
                                 }
                                 return theModule;
                             }
-                            catch (_) {
+                            catch {
                                 return undefined;
                             }
                         }
